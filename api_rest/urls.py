@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 from .views import visualizar_alunos_matriculados
+from .views import email_view
+
 
 urlpatterns = [
     path('dados/', views.get_funcionario_usuario_professor_aluno_disciplina_livros_turma, name='get_funcionario_usuario_profesor_aluno_disciplina_livros_turma'),
@@ -29,5 +31,11 @@ urlpatterns = [
     path('matriculas/', views.matricula_list_create, name='matricula-list-create'),
     path('matriculas/<int:pk>/', views.matricula_detail_update_delete, name='matricula-detail-update-delete'),
     path('turmas/<int:id_turma>/alunos/', views.alunos_por_turma, name='alunos-por-turma'),
+    
+    
+path('enviar-email/', email_view, name='email_view'),
 
+  
 ]
+
+

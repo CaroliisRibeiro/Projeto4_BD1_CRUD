@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 from django.http import JsonResponse
 
+
 class Funcionario(models.Model):
     id_funcionario = models.AutoField(primary_key=True)
     nome_funcionario = models.CharField(max_length=150, default='')
@@ -67,11 +68,13 @@ class Livro(models.Model):
     autor_livro = models.CharField(max_length=150, default='')
     edicao = models.IntegerField(default=1)
     quantidade_exemplares = models.IntegerField(default=0)
+    descricao = models.TextField(default='')  # Adicione este campo
+    
+
 
     def __str__(self):
         return f'ID_Livro: {self.id_livro} | Título: {self.nome_livro}'
 
-from django.db import models
 
 class Turma(models.Model):
     MAX_ALUNOS = 30
@@ -93,8 +96,6 @@ class Turma(models.Model):
 
     def __str__(self):
         return f'ID_Turma: {self.id_turma} | Nome: {self.nome_turma}'
-
-
 
 
 

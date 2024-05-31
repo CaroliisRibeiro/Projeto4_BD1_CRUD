@@ -6,7 +6,10 @@ from .models import Funcionario, Usuario, Professor, Disciplina, Aluno, Livro, T
 from .serializers import FuncionarioSerializer, UsuarioSerializer, ProfessorSerializer, DisciplinaSerializer, AlunoSerializer, LivroSerializer, TurmaSerializer, MatriculaSerializer
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-#from .models import Turma
+from django.shortcuts import render
+from sklearn.metrics.pairwise import linear_kernel
+from django.core.mail import send_mail
+from .models import Livro  # Importe o modelo Livro
 
 
 @api_view(['GET'])
@@ -306,10 +309,6 @@ def visualizar_alunos_matriculados(request):
     data = {turma.nome_turma: [aluno.nome_aluno for aluno in turma.alunos_turma.all()] for turma in turmas}
     return Response(data)
 
-
-
-
-
 def listar_alunos_por_turma(request, turma_id):
     try:
         turma = get_object_or_404(Turma, pk=turma_id)
@@ -318,3 +317,27 @@ def listar_alunos_por_turma(request, turma_id):
         return JsonResponse(alunos_list, safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+    
+
+def obter_sugestoes_de_livros():
+    # Obtenha os últimos 5 livros adicionados como sugestões
+    sugestoes = Livro.objects.order_by('-id')[:5]
+
+    # Agora você pode retornar essas sugestões
+    return sugestoes
+
+
+
+def email_view(request):
+    # Lógica para obter sugestões de livros
+    sugestoes = obter_sugestoes_de_livros()
+
+    # Lógica para determinar os destinatários do e-mail
+    # Aqui você pode obter os e-mails dos destinatários, por exemplo, de um modelo de usuário
+    destinatarios = ['exemplo1@email.com', 'exemplo2@email.com']  # Substitua pelos e-mails reais dos destinatários
+
+    # Chame a função para enviar as sugestões por e-mail
+    enviar_sugestoes_por_email(destinatarios, sugestoes)
+
+    return render(request, 'template.html', {'sugestoes': sugestoes})
