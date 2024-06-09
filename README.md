@@ -1,1 +1,1 @@
-GRANFINALE
+Grand Finale
