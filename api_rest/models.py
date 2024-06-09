@@ -68,6 +68,38 @@ class Livro(models.Model):
     autor_livro = models.CharField(max_length=150, default='')
     edicao = models.IntegerField(default=1)
     quantidade_exemplares = models.IntegerField(default=0)
+    descricao = models.TextField(default='')  # Campo de descrição adicionado
+
+    def __str__(self):
+        return f'ID_Livro: {self.id_livro} | Título: {self.nome_livro}'
+
+class Turma(models.Model):
+    MAX_ALUNOS = 30
+
+    id_turma = models.AutoField(primary_key=True)
+    nome_turma = models.CharField(max_length=150, default='')
+    professor_turma = models.ForeignKey(Professor, on_delete=models.CASCADE)
+    alunos_turma = models.ManyToManyField(Aluno, through='Matricula')
+
+    def adicionar_aluno(self, aluno):
+        if self.alunos_turma.count() >= self.MAX_ALUNOS:
+            raise Exception("A turma já atingiu o limite máximo de alunos.")
+        if Matricula.objects.filter(aluno=aluno).exists():
+            raise Exception("O aluno já está matriculado em outra turma.")
+        Matricula.objects.create(aluno=aluno, turma=self)
+
+    def obter_alunos(self):
+        return self.alunos_turma.all()
+
+    def __str__(self):
+        return f'ID_Turma: {self.id_turma} | Nome: {self.nome_turma}'
+
+class Livro(models.Model):
+    id_livro = models.AutoField(primary_key=True)
+    nome_livro = models.CharField(max_length=150, default='')
+    autor_livro = models.CharField(max_length=150, default='')
+    edicao = models.IntegerField(default=1)
+    quantidade_exemplares = models.IntegerField(default=0)
     descricao = models.TextField(default='')  # Adicione este campo
     
 
