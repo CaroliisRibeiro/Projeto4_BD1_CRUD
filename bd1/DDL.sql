@@ -1,24 +1,172 @@
-/* Projeto _2_banco de Dados_logico_reentrega_v3: */
+/* Normalização 3NF:
+
+tabela Bibliotecario: 
+criação de referências
+
+tabela Multa: 
+criação de uma chave primária ID_MULTA, substituindo antiga chave primária composta
+
+tabela Implica_Emprestimo_Devolucao_Multa: 
+criação de chave primária, criação de referências
+
+tabela Entrada_de_dinheiro_Taxas_Escola_Aluguel_de_Espaco_Cantina_Venda_de_produtos_Financas_E_comerce_Mensalidade_Multa:
+	dividida em tabelas menores para normalização
+
+tabela Aplica_Midia_E_comerce_Promocoes: 
+dividida em tabelas menores para normalização
+
+tabela Efetua_Emprestimo_E_book_Livro_Usuario_Devolucao_Bibliotecario: 
+criação de referências
+
+tabela Coordena_Doacao_Midia_E_comerce_Bibliotecario_Estoque:
+	dividida em tabelas menores para normalização, criação de referências conforme 3NF
+
+tabela Possui_Bibliotecario_E_book_Usuario_Biblioteca_Estoque 
+	dividida em tabelas menores para normalização, criação de referências conforme 3NF
+
+tabela E_commerce: 
+criação de chave primária única
+
+tabela Biblioteca:
+criação de referências
+
+tabela Escola:
+criação de referências
+
+tabela Aluno:
+criação de referências
+ */
+
+CREATE TABLE Funcionario (
+    Id_Func INT PRIMARY KEY,
+    Mat_Funcionario VARCHAR,
+    Data_Nasc DATE,
+    E_mail VARCHAR,
+    Funcao VARCHAR,
+    Salario FLOAT,
+    CPF VARCHAR(11),
+    Telefone VARCHAR(15),
+    Nome VARCHAR
+);
 
 CREATE TABLE Bibliotecario (
-    Login VARCHAR,
+    Id_Bibliotecario INT PRIMARY KEY,
+    Login_biblioteca VARCHAR,
     Senha VARCHAR,
     fk_Funcionario_ID_Func INT,
-    fk_Funcionario_E_mail VARCHAR,
-    fk_Funcionario_Telefone INT,
-    fk_Funcionario_Funcao VARCHAR,
-    fk_Funcionario_Salario FLOAT,
-    fk_Funcionario_Data_Nasc DATE,
-    fk_Funcionario_CPF INT
+    FOREIGN KEY (fk_Funcionario_ID_Func) REFERENCES Funcionario(Id_Func)
 );
 
 CREATE TABLE Emprestimo (
     Tempo_Permanencia TIME,
     ID_Usuario INT,
     Data_Emprest DATE,
-    ID_Emprest INT,
-    ID_Func INT
+    ID_Emprest INT PRIMARY KEY,
+    fk_Funcionario_ID_Func INT,
+    FOREIGN KEY (fk_Funcionario_ID_Func) REFERENCES Funcionario(Id_Func)
 );
+
+CREATE TABLE Devolucao (
+    ID_Devolucao INT,
+    ID_Livro INT PRIMARY KEY,
+    Quant_Exemplares INT,
+    ID_Usuario INT,
+    Data_Dev DATE,
+    fk_Funcionario_ID_Func INT,
+    FOREIGN KEY (fk_Funcionario_ID_Func) REFERENCES Funcionario(Id_Func)
+);
+
+CREATE TABLE Multa (
+    ID_Multa INT PRIMARY KEY,
+    Data_Emprest DATE,
+    Data_Dev DATE,
+    Tempo_Permanencia TIME,
+    Livro_Danificado BOOLEAN,
+    ID_Livro INT,
+    ID_Usuario INT
+);
+
+CREATE TABLE Implica_Emprestimo_Devolucao_Multa (
+    ID_Implicacao INT PRIMARY KEY,
+    fk_Devolucao_ID INT,
+    fk_Multa_ID INT,
+    FOREIGN KEY (fk_Devolucao_ID) REFERENCES Devolucao(ID_Devolucao),
+    FOREIGN KEY (fk_Multa_ID) REFERENCES Multa(ID_Multa)
+);
+
+CREATE TABLE Entrada_de_dinheiro_Taxas (
+    ID INT PRIMARY KEY,
+    fk_Taxa_Id INT,
+    fk_Escola_ID_Matricula INT,
+    FOREIGN KEY (fk_Taxa_Id) REFERENCES Taxas(Taxa_Id),
+    FOREIGN KEY (fk_Escola_ID_Matricula) REFERENCES Escola(ID_Matricula)
+);
+
+CREATE TABLE Entrada_de_dinheiro_Aluguel_de_Espaco (
+    ID INT PRIMARY KEY,
+    fk_Espaco_Id INT,
+    FOREIGN KEY (fk_Espaco_Id) REFERENCES Aluguel_de_Espaco(Espaco_Id)
+);
+
+CREATE TABLE Entrada_de_dinheiro_Venda_de_produtos (
+    ID INT PRIMARY KEY,
+    fk_Loja_Id INT,
+    FOREIGN KEY (fk_Loja_Id) REFERENCES Venda_de_produtos(Loja_Id)
+);
+
+CREATE TABLE Entrada_de_dinheiro_Financas (
+    ID INT PRIMARY KEY,
+    fk_Fin_Id INT,
+    FOREIGN KEY (fk_Fin_Id) REFERENCES Financas(Fin_Id)
+);
+
+CREATE TABLE Entrada_de_dinheiro_E_comerce (
+    ID INT PRIMARY KEY,
+    fk_Livro_Id INT,
+    fk_Vendedor_Id INT,
+    fk_Cliente_Id INT,
+    FOREIGN KEY (fk_Livro_Id) REFERENCES E_comerce(ID_Livro),
+    FOREIGN KEY (fk_Vendedor_Id) REFERENCES E_comerce(ID_Vendedor),
+    FOREIGN KEY (fk_Cliente_Id) REFERENCES E_comerce(ID_Cliente)
+);
+
+CREATE TABLE Entrada_de_dinheiro_Mensalidade (
+    ID INT PRIMARY KEY,
+    fk_Mens_Id INT,
+    FOREIGN KEY (fk_Mens_Id) REFERENCES Mensalidade(Mens_Id)
+);
+
+CREATE TABLE Entrada_de_dinheiro_Multa (
+    ID INT PRIMARY KEY,
+    fk_Multa_Id INT,
+    FOREIGN KEY (fk_Multa_Id) REFERENCES Multa(ID_Multa)
+);
+
+CREATE TABLE Aplica_Midia (
+    ID INT PRIMARY KEY,
+    fk_Midia_E_mail_Biblioteca VARCHAR,
+    fk_Funcionario_ID_Func INT,
+    FOREIGN KEY (fk_Funcionario_ID_Func) REFERENCES Funcionario(Id_Func),
+    FOREIGN KEY (fk_Midia_E_mail_Biblioteca) REFERENCES Midia(E_mail_Biblioteca)
+);
+
+CREATE TABLE Aplica_E_comerce (
+    ID INT PRIMARY KEY,
+    fk_Livro_ID INT,
+    fk_Vendedor_ID INT,
+    fk_Cliente_ID INT,
+    FOREIGN KEY (fk_Livro_ID, fk_Vendedor_ID, fk_Cliente_ID) REFERENCES E_comerce(ID_Livro, ID_Vendedor, ID_Cliente)
+);
+
+CREATE TABLE Aplica_Promocoes (
+    ID INT PRIMARY KEY,
+    fk_Livro_ID INT,
+    fk_Usuario_ID INT,
+    fk_Funcionario_ID_Func INT,
+    FOREIGN KEY (fk_Funcionario_ID_Func) REFERENCES Funcionario(Id_Func),
+    FOREIGN KEY (fk_Livro_ID) REFERENCES Promocoes(ID_Livro)
+);
+
 
 CREATE TABLE Livro (
     Autor VARCHAR,
@@ -26,7 +174,7 @@ CREATE TABLE Livro (
     Edicao VARCHAR,
     Titulo VARCHAR,
     Editora VARCHAR,
-    Status BOOLEAN,
+    Livro_Status BOOLEAN,
     ID_Livro INT PRIMARY KEY,
     Area VARCHAR,
     Genero VARCHAR
@@ -37,50 +185,38 @@ CREATE TABLE E_book (
     Autor VARCHAR,
     Edicao VARCHAR,
     ID_book INT PRIMARY KEY,
-    Status BOOLEAN,
+    E_book_Status BOOLEAN,
     Link VARCHAR,
     Genero VARCHAR,
     Area VARCHAR
 );
 
-CREATE TABLE Devolucao (
-    ID_Devolucao INT,
-    ID_Livro INT PRIMARY KEY,
-    Quant_Exemplares INT,
-    ID_Func INT,
-    ID_Usuario INT,
-    Data_Dev DATE
-);
 
 CREATE TABLE Midia (
-    ID_Func INT,
+    ID_Midia INT PRIMARY KEY,
     Mundo VARCHAR,
     Tema VARCHAR,
     Area VARCHAR,
-    Local VARCHAR,
+    localizacao VARCHAR,
     E_mail_Biblioteca VARCHAR,
     Midia_TIPO INT,
-    PRIMARY KEY (ID_Func, E_mail_Biblioteca)
+    fk_Funcionario_ID_Func INT,
+    FOREIGN KEY (fk_Funcionario_ID_Func) REFERENCES Funcionario(Id_Func)
+    
 );
 
 CREATE TABLE Promocoes (
+    ID_Promocoes INT PRIMARY KEY
     ID_Livro INT,
-    ID_Func INT,
     Promocoes_TIPO VARCHAR,
-    PRIMARY KEY (ID_Livro, ID_Func)
+    fk_Funcionario_ID_Func INT,
+    FOREIGN KEY (fk_Funcionario_ID_Func) REFERENCES Funcionario(Id_Func)
+    
 );
 
-CREATE TABLE Multa (
-    Data_Emprest DATE,
-    Data_Dev DATE,
-    Tempo_Permanencia TIME,
-    Livro_Danificado BOOLEAN,
-    ID_livro INT,
-    ID_Usuario INT,
-    PRIMARY KEY (ID_livro, ID_Usuario)
-);
 
 CREATE TABLE Doacao (
+    ID_Doacao INT PRIMARY KEY,
     ID_Livro INT,
     Genero VARCHAR,
     Titulo VARCHAR,
@@ -90,6 +226,7 @@ CREATE TABLE Doacao (
 );
 
 CREATE TABLE E_comerce (
+    ID_Ecomerce INT PRIMARY KEY,
     Titulo VARCHAR,
     Genero VARCHAR,
     Editora VARCHAR,
@@ -101,18 +238,23 @@ CREATE TABLE E_comerce (
     E_mail VARCHAR,
     ID_Cliente INT,
     E_comerce_TIPO INT,
-    CNPJ INT,
-    PRIMARY KEY (ID_Livro, ID_Vendedor, ID_Cliente)
+    CNPJ INT
 );
 
 CREATE TABLE Biblioteca (
     idSala INT PRIMARY KEY,
     ID_Livro INT,
     ID_book INT,
-    ID_Func INT,
     ID_Vendedor INT,
     ID_Cliente INT,
-    E_mail_Biblioteca VARCHAR
+    E_mail_Biblioteca VARCHAR,
+    fk_Bibliotecario_ID_Func INT,
+    FOREIGN KEY (fk_Funcionario_ID_Func) REFERENCES Funcionario(Id_Func)
+    FOREIGN KEY (ID_Livro) REFERENCES Livro(ID_Livro),
+    FOREIGN KEY (ID_book) REFERENCES E_book(ID_book),
+    FOREIGN KEY (ID_Func) REFERENCES Funcionario(Id_Func),
+    FOREIGN KEY (ID_Vendedor) REFERENCES E_comerce(ID_Vendedor),
+    FOREIGN KEY (ID_Cliente) REFERENCES E_comerce(ID_Cliente)
 );
 
 CREATE TABLE Escola (
@@ -130,20 +272,37 @@ CREATE TABLE Escola (
     Espaco_Id INT,
     Taxa_Id INT,
     Loja_Id INT,
-    fk_Biblioteca_idSala INT
+    fk_Biblioteca_idSala INT,
+    FOREIGN KEY (Evento_Id) REFERENCES Eventos(Evento_Id),
+    FOREIGN KEY (Cardapio_Id) REFERENCES Cantina(Cardapio_Id),
+    FOREIGN KEY (Fin_Id) REFERENCES Financas(Fin_Id),
+    FOREIGN KEY (Func_Id) REFERENCES Funcionario(Id_Func),
+    FOREIGN KEY (Disc_Id) REFERENCES Disciplina(DisC_Id),
+    FOREIGN KEY (Prof_Id) REFERENCES Professor(Prof_Id),
+    FOREIGN KEY (Lab_Id) REFERENCES Sala_Lab(id_sala_lab),
+    FOREIGN KEY (Id_Depart) REFERENCES Departamento(Id_Depart),
+    FOREIGN KEY (Aluno_Id) REFERENCES Aluno(Aluno_Id),
+    FOREIGN KEY (Nota_Id) REFERENCES Disciplina(Nota_Id),
+    FOREIGN KEY (Espaco_Id) REFERENCES Espacos(Evento_Id),
+    FOREIGN KEY (Taxa_Id) REFERENCES Taxas(Taxa_Id),
+    FOREIGN KEY (Loja_Id) REFERENCES Venda_de_produtos(Loja_Id),
+    FOREIGN KEY (fk_Biblioteca_idSala) REFERENCES Biblioteca(idSala)
 );
 
 CREATE TABLE Aluno (
+    Aluno_Id INT PRIMARY KEY,
     Data_Nasc DATE,
     Endereco VARCHAR,
     Mens_Id INT,
-    Aluno_Id INT PRIMARY KEY,
     Matricula_Id INT,
     Nota_Id INT,
     Ano_Serie SMALLINT,
-    Telefone INT,
-    E_mail INT,
-    CPF INT
+    Telefone VARCHAR(15),
+    E_mail VARCHAR(100),
+    CPF VARCHAR(11),
+    FOREIGN KEY (Mens_Id) REFERENCES Mensalidade(Mens_Id),
+    FOREIGN KEY (Matricula_Id) REFERENCES Escola(ID_Matricula),
+    FOREIGN KEY (Nota_Id) REFERENCES Disciplina(Nota_Id)
 );
 
 CREATE TABLE Extracurricular (
@@ -186,12 +345,12 @@ CREATE TABLE Professor (
     Prof_Id INT PRIMARY KEY,
     E_mail VARCHAR,
     Data_Nasc DATE,
-    Telefone INT,
+    Telefone VARCHAR,
     Salario FLOAT
 );
 
 CREATE TABLE Sala_Lab (
-    Local VARCHAR,
+    Localizacao VARCHAR,
     Disponibilidade BOOLEAN,
     id_sala_lab INT PRIMARY KEY
 );
@@ -201,22 +360,11 @@ CREATE TABLE Departamento (
     Id_Depart INT PRIMARY KEY
 );
 
-CREATE TABLE Funcionario (
-    Id_Func INT PRIMARY KEY,
-    Mat_Funcionario VARCHAR,
-    Data_Nasc DATE,
-    E_mail VARCHAR,
-    Funcao VARCHAR,
-    Salario FLOAT,
-    CPF INT,
-    Telefone INT,
-    Nome INT
-);
 
 CREATE TABLE Parcerias (
     Beneficios VARCHAR,
     Tipo VARCHAR,
-    Parceria_Id INT,
+    Parceria_Id INT PRIMARY KEY,
     Data_de_inicio DATE
 );
 
@@ -227,7 +375,7 @@ CREATE TABLE Eventos (
 );
 
 CREATE TABLE Espacos (
-    Local VARCHAR,
+    Localizacao VARCHAR,
     Disponibilidade DATE,
     Evento_Id INT PRIMARY KEY
 );
@@ -236,7 +384,7 @@ CREATE TABLE Aluguel_de_Espaco (
     Disponibilidade DATE,
     Espaco_Id INT PRIMARY KEY,
     Capacidade INT,
-    Local VARCHAR
+    Localizacao VARCHAR
 );
 
 CREATE TABLE Cantina (
@@ -260,11 +408,16 @@ CREATE TABLE Estoque (
     ID_Livro INT
 );
 
-CREATE TABLE Efetua_Emprestimo_E_book_Livro_Usuario_Devolucao_Bibliotecario (
-    fk_E_book_ID_book INT,
-    fk_Livro_ID_Livro INT,
-    fk_Devolucao_ID_Livro INT,
-    fk_Bibliotecario_ID_Func INT
+CREATE TABLE Efetua_Emprestimo (
+    ID INT PRIMARY KEY,
+    fk_E_book_ID INT,
+    fk_Livro_ID INT,
+    fk_Devolucao_ID INT,
+    fk_Bibliotecario_ID INT,
+    FOREIGN KEY (fk_E_book_ID) REFERENCES E_book(ID_book),
+    FOREIGN KEY (fk_Livro_ID) REFERENCES Livro(ID_Livro),
+    FOREIGN KEY (fk_Devolucao_ID) REFERENCES Devolucao(ID_Devolucao),
+    FOREIGN KEY (fk_Bibliotecario_ID) REFERENCES Bibliotecario(fk_Funcionario_ID_Func)
 );
 
 CREATE TABLE Cadastra_E_book_Bibliotecario (
@@ -276,27 +429,56 @@ CREATE TABLE Reserva_E_book (
     fk_E_book_ID_book INT
 );
 
-CREATE TABLE Coordena_Doacao_Midia_E_comerce_Bibliotecario_Estoque (
-    fk_Doacao_ID_Usuraio INT,
+CREATE TABLE Coordena_Doacao (
+    ID INT PRIMARY KEY,
+    fk_Doacao_ID_Usuario INT,
+    FOREIGN KEY (fk_Doacao_ID_Usuario) REFERENCES Usuario(ID_Usuario)
+);
+
+CREATE TABLE Coordena_Midia (
+    ID INT PRIMARY KEY,
     fk_Midia_ID_Func INT,
     fk_Midia_E_mail_Biblioteca VARCHAR,
-    fk_E_comerce_ID_Livro INT,
-    fk_E_comerce_ID_Vendedor INT,
-    fk_E_comerce_ID_Cliente INT,
-    fk_Bibliotecario_ID_Func INT,
-    fk_Retirada_ID_compra INT
+    FOREIGN KEY (fk_Midia_ID_Func, fk_Midia_E_mail_Biblioteca) REFERENCES Midia(ID_Func, E_mail_Biblioteca)
 );
 
-CREATE TABLE Implica_Emprestimo_Devolucao_Multa (
-    fk_Devolucao_ID_Livro INT,
-    fk_Multa_ID_livro INT,
-    fk_Multa_ID_Usuario INT
+CREATE TABLE Coordena_E_comerce (
+    ID INT PRIMARY KEY,
+    fk_Livro_ID INT,
+    fk_Vendedor_ID INT,
+    fk_Cliente_ID INT,
+    FOREIGN KEY (fk_Livro_ID, fk_Vendedor_ID, fk_Cliente_ID) REFERENCES E_comerce(ID_Livro, ID_Vendedor, ID_Cliente)
 );
 
-CREATE TABLE Possui_Bibliotecario_E_book_Usuario_Biblioteca_Estoque (
-    fk_Bibliotecario_ID_Func INT,
-    fk_E_book_ID_book INT,
-    fk_Biblioteca_idSala INT
+CREATE TABLE Coordena_Bibliotecario (
+    ID INT PRIMARY KEY,
+    fk_Bibliotecario_ID INT,
+    FOREIGN KEY (fk_Bibliotecario_ID) REFERENCES Bibliotecario(fk_Funcionario_ID_Func)
+);
+
+CREATE TABLE Coordena_Estoque (
+    ID INT PRIMARY KEY,
+    fk_Retirada_ID_compra INT,
+    FOREIGN KEY (fk_Retirada_ID_compra) REFERENCES Compra(ID_compra)
+);
+
+
+CREATE TABLE Possui_Bibliotecario (
+    ID INT PRIMARY KEY,
+    fk_Bibliotecario_ID INT,
+    FOREIGN KEY (fk_Bibliotecario_ID) REFERENCES Bibliotecario(fk_Funcionario_ID_Func)
+);
+
+CREATE TABLE Possui_E_book (
+    ID INT PRIMARY KEY,
+    fk_E_book_ID INT,
+    FOREIGN KEY (fk_E_book_ID) REFERENCES E_book(ID_book)
+);
+
+CREATE TABLE Possui_Biblioteca (
+    ID INT PRIMARY KEY,
+    fk_Biblioteca_idSala INT,
+    FOREIGN KEY (fk_Biblioteca_idSala) REFERENCES Biblioteca(idSala)
 );
 
 CREATE TABLE Estuda (
@@ -317,19 +499,6 @@ CREATE TABLE Paga_Aluno_Taxas_Mensalidade (
     fk_Mensalidade_Mens_Id INT
 );
 
-CREATE TABLE Entrada_de_dinheiro_Taxas_Escola_Aluguel_de_Espaco_Cantina_Venda_de_produtos_Financas_E_comerce_Mensalidade_Multa (
-    fk_Taxas_Taxa_Id INT,
-    fk_Escola_ID_Matricula INT,
-    fk_Aluguel_de_Espaco_Espaco_Id INT,
-    fk_Venda_de_produtos_Loja_Id INT,
-    fk_Financas_Fin_Id INT,
-    fk_E_comerce_ID_Livro INT,
-    fk_E_comerce_ID_Vendedor INT,
-    fk_E_comerce_ID_Cliente INT,
-    fk_Mensalidade_Mens_Id INT,
-    fk_Multa_ID_livro INT,
-    fk_Multa_ID_Usuario INT
-);
 
 CREATE TABLE Ensina (
     fk_Disciplina_DisC_Id INT,
@@ -371,16 +540,6 @@ CREATE TABLE Contem (
     fk_Livro_ID_Livro INT
 );
 
-CREATE TABLE Aplica_Midia_E_comerce_Promocoes (
-    fk_Midia_ID_Func INT,
-    fk_Midia_E_mail_Biblioteca VARCHAR,
-    fk_E_comerce_ID_Livro INT,
-    fk_E_comerce_ID_Vendedor INT,
-    fk_E_comerce_ID_Cliente INT,
-    fk_Promocoes_ID_Livro INT,
-    fk_Promocoes_ID_Usuario INT,
-    fk_Promocoes_ID_Func INT
-);
 
 CREATE TABLE Adiciona (
     fk_Doacao_ID_Usuraio INT
@@ -408,10 +567,36 @@ CREATE TABLE Terceiros (
     CPF INT,
     Endereco VARCHAR
 );
+
+ALTER TABLE Aplica_Midia_E_comerce_Promocoes ADD CONSTRAINT FK_Aplica_Midia_E_comerce_Promocoes_3
+    FOREIGN KEY (fk_Promocoes_ID_Livro, fk_Promocoes_ID_Usuario???, fk_Promocoes_ID_Func)
+    REFERENCES Promocoes (ID_Livro, ???, ID_Func)
+    ON DELETE NO ACTION;
+    
+ALTER TABLE Entrada_de_dinheiro_Taxas_Escola_Aluguel_de_Espaco_Cantina_Venda_de_produtos_Financas_E_comerce_Mensalidade_Multa ADD CONSTRAINT FK_Entrada_de_dinheiro_Taxas_Escola_Aluguel_de_Espaco_Cantina_Venda_de_produtos_Financas_E_comerce_Mensalidade_Multa_8
+    FOREIGN KEY (fk_Multa_ID_livro, fk_Multa_ID_Usuario)
+    REFERENCES Multa (ID_livro, ID_Usuario)
+    ON DELETE NO ACTION;
+
+ALTER TABLE Possui_Bibliotecario_E_book_Usuario_Biblioteca_Estoque ADD CONSTRAINT FK_Possui_Bibliotecario_E_book_Usuario_Biblioteca_Estoque_3
+    FOREIGN KEY (fk_Usuario_ID_Usuario)
+    REFERENCES Usuario (ID_Usuario)
+    ON DELETE NO ACTION;
+
+ALTER TABLE Efetua_Emprestimo_E_book_Livro_Usuario_Devolucao_Bibliotecario ADD CONSTRAINT FK_Efetua_Emprestimo_E_book_Livro_Usuario_Devolucao_Bibliotecario_3
+    FOREIGN KEY (fk_Usuario_ID_Usuario???)
+    REFERENCES ??? (???)
+    ON DELETE NO ACTION;
+
+ALTER TABLE Implica_Emprestimo_Devolucao_Multa ADD CONSTRAINT FK_Implica_Emprestimo_Devolucao_Multa_2
+    FOREIGN KEY (fk_Multa_ID_livro, fk_Multa_ID_Usuario)
+    REFERENCES Multa (ID_livro, ID_Usuario)
+    ON DELETE NO ACTION;
  
-ALTER TABLE Bibliotecario ADD CONSTRAINT FK_Bibliotecario_1
-    FOREIGN KEY (fk_Funcionario_ID_Func???, fk_Funcionario_E_mail???, fk_Funcionario_Telefone???, fk_Funcionario_Funcao???, fk_Funcionario_Salario???, fk_Funcionario_Data_Nasc???, fk_Funcionario_CPF???)
-    REFERENCES ??? (???);
+ALTER TABLE Bibliotecario 
+ADD CONSTRAINT FK_Bibliotecario_1
+    FOREIGN KEY (fk_Funcionario_ID_Func)
+    REFERENCES Funcionario(Id_Func);
  
 ALTER TABLE Escola ADD CONSTRAINT FK_Escola_2
     FOREIGN KEY (fk_Biblioteca_idSala)
@@ -428,10 +613,6 @@ ALTER TABLE Efetua_Emprestimo_E_book_Livro_Usuario_Devolucao_Bibliotecario ADD C
     REFERENCES ??? (???)
     ON DELETE NO ACTION;
  
-ALTER TABLE Efetua_Emprestimo_E_book_Livro_Usuario_Devolucao_Bibliotecario ADD CONSTRAINT FK_Efetua_Emprestimo_E_book_Livro_Usuario_Devolucao_Bibliotecario_3
-    FOREIGN KEY (fk_Usuario_ID_Usuario???)
-    REFERENCES ??? (???)
-    ON DELETE NO ACTION;
  
 ALTER TABLE Efetua_Emprestimo_E_book_Livro_Usuario_Devolucao_Bibliotecario ADD CONSTRAINT FK_Efetua_Emprestimo_E_book_Livro_Usuario_Devolucao_Bibliotecario_4
     FOREIGN KEY (fk_Devolucao_ID_Livro)
@@ -487,11 +668,6 @@ ALTER TABLE Implica_Emprestimo_Devolucao_Multa ADD CONSTRAINT FK_Implica_Emprest
     REFERENCES Devolucao (ID_Livro)
     ON DELETE NO ACTION;
  
-ALTER TABLE Implica_Emprestimo_Devolucao_Multa ADD CONSTRAINT FK_Implica_Emprestimo_Devolucao_Multa_2
-    FOREIGN KEY (fk_Multa_ID_livro, fk_Multa_ID_Usuario)
-    REFERENCES Multa (ID_livro, ID_Usuario)
-    ON DELETE NO ACTION;
- 
 ALTER TABLE Possui_Bibliotecario_E_book_Usuario_Biblioteca_Estoque ADD CONSTRAINT FK_Possui_Bibliotecario_E_book_Usuario_Biblioteca_Estoque_1
     FOREIGN KEY (fk_Bibliotecario_ID_Func???)
     REFERENCES ??? (???)
@@ -502,10 +678,6 @@ ALTER TABLE Possui_Bibliotecario_E_book_Usuario_Biblioteca_Estoque ADD CONSTRAIN
     REFERENCES E_book (ID_book)
     ON DELETE NO ACTION;
  
-ALTER TABLE Possui_Bibliotecario_E_book_Usuario_Biblioteca_Estoque ADD CONSTRAINT FK_Possui_Bibliotecario_E_book_Usuario_Biblioteca_Estoque_3
-    FOREIGN KEY (fk_Usuario_ID_Usuario)
-    REFERENCES Usuario (ID_Usuario)
-    ON DELETE NO ACTION;
  
 ALTER TABLE Possui_Bibliotecario_E_book_Usuario_Biblioteca_Estoque ADD CONSTRAINT FK_Possui_Bibliotecario_E_book_Usuario_Biblioteca_Estoque_4
     FOREIGN KEY (fk_Biblioteca_idSala)
@@ -587,10 +759,6 @@ ALTER TABLE Entrada_de_dinheiro_Taxas_Escola_Aluguel_de_Espaco_Cantina_Venda_de_
     REFERENCES Mensalidade (Mens_Id)
     ON DELETE NO ACTION;
  
-ALTER TABLE Entrada_de_dinheiro_Taxas_Escola_Aluguel_de_Espaco_Cantina_Venda_de_produtos_Financas_E_comerce_Mensalidade_Multa ADD CONSTRAINT FK_Entrada_de_dinheiro_Taxas_Escola_Aluguel_de_Espaco_Cantina_Venda_de_produtos_Financas_E_comerce_Mensalidade_Multa_8
-    FOREIGN KEY (fk_Multa_ID_livro, fk_Multa_ID_Usuario)
-    REFERENCES Multa (ID_livro, ID_Usuario)
-    ON DELETE NO ACTION;
  
 ALTER TABLE Ensina ADD CONSTRAINT FK_Ensina_1
     FOREIGN KEY (fk_Disciplina_DisC_Id, fk_Disciplina_Nota_Id)
@@ -677,10 +845,6 @@ ALTER TABLE Aplica_Midia_E_comerce_Promocoes ADD CONSTRAINT FK_Aplica_Midia_E_co
     REFERENCES E_comerce (ID_Livro, ID_Vendedor, ID_Cliente)
     ON DELETE RESTRICT;
  
-ALTER TABLE Aplica_Midia_E_comerce_Promocoes ADD CONSTRAINT FK_Aplica_Midia_E_comerce_Promocoes_3
-    FOREIGN KEY (fk_Promocoes_ID_Livro, fk_Promocoes_ID_Usuario???, fk_Promocoes_ID_Func)
-    REFERENCES Promocoes (ID_Livro, ???, ID_Func)
-    ON DELETE NO ACTION;
  
 ALTER TABLE Adiciona ADD CONSTRAINT FK_Adiciona_1
     FOREIGN KEY (fk_Doacao_ID_Usuraio???)

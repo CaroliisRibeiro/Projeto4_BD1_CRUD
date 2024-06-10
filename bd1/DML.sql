@@ -17,7 +17,7 @@ INSERT INTO Devolucao (ID_Devolucao, ID_Livro, Quant_Exemplares, Data_Dev, ID_Fu
 VALUES (1, 1, 1, '2024-04-23', 1, 1);
 
 INSERT INTO Midia (ID_Func, Mundo, Tema, Area, Local, E_mail_Biblioteca, Midia_TIPO) 
-VALUES (1, 'Digital', 'Tecnologia', 'Informática', 'Online', 'biblioteca@email.com', 1);
+VALUES (1, 'Digital', 'Tecnologia', 'Informática', 'Online', 'biblioteca@educa.com.br', 1);
 
 INSERT INTO Aluno (Nome, Matricula, Data_Nascimento, Endereco, Telefone, Email, Curso)
 VALUES ('Maria Silva', '2024001', '2000-05-15', 'Rua D, 123', '987654321', 'maria@email.com', 'Engenharia Civil');
@@ -30,3 +30,20 @@ VALUES ('Sala de Aula 101', 30, 'Sala de Aula', 'Bloco A, 1º Andar');
 
 INSERT INTO Mensalidade (ID_Aluno, Valor, Data_Vencimento, Status_Pagamento)
 VALUES (1, 500.00, '2024-04-30', 'Pendente');
+
+CREATE TRIGGER atualizar_estoque
+AFTER INSERT ON Venda_de_produtos
+FOR EACH ROW
+BEGIN
+    UPDATE Estoque
+    SET estoque = estoque - 1
+    WHERE id = NEW.ID_Livro;
+END;
+
+CREATE TRIGGER Registrar_promocoes_em_midia
+AFTER UPDATE ON Aplica_Promocoes
+FOR EACH ROW
+BEGIN
+    INSERT INTO Aplica_Midia (ID, fk_Midia_E_mail_Biblioteca, fk_Funcionario_ID_Func)
+    VALUES (1, 'biblioteca@educa.com.br', 'carlos@educa.com.br');
+END;

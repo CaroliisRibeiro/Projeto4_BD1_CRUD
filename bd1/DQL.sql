@@ -37,3 +37,26 @@ ADD COLUMN Ano_Publicacao YEAR;
 
 
 DROP TABLE Editora;
+
+DELIMITER $$
+
+CREATE PROCEDURE getEmprestimosPorCliente(IN id_cliente INT)
+BEGIN
+    SELECT *
+    FROM Emprestimo
+    WHERE ID_Usuario = id_cliente;
+    
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE GetLivrosPorAutor(IN nome_autor VARCHAR)
+BEGIN
+    SELECT *
+    FROM livros
+    WHERE Autor = nome_autor;
+END $$
+
+DELIMITER ;
