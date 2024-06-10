@@ -24,6 +24,7 @@ no esquema durante o processo de normalização.
 e Exclusão (CRUD) em um framework distinto (cada equipe vai usar um
 framework diferente) em pelo menos três tabelas do banco de dados.
 
+![crud](https://github.com/CaroliisRibeiro/Projeto4_BD1_CRUD/assets/127742540/61d498e2-fada-44e3-ba17-644724bc87b4)
 
 
 ## O CRUD 
