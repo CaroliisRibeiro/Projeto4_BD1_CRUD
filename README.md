@@ -1,5 +1,12 @@
 
 # Projeto 4 de BD - Grand finale- para a “EducaLivros Online”
+<br>
+
+
+![giphy (6)](https://github.com/CaroliisRibeiro/Projeto4_BD1_CRUD/assets/127742540/17e72d54-e1b7-4ea7-8155-842619e5e41e)
+
+
+<br>
 
 ## OBJETIVOS
 <br>
