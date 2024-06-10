@@ -1,5 +1,12 @@
 
 # Projeto 4 de BD - Grand finale- para a “EducaLivros Online”
+<br>
+
+
+![giphy (6)](https://github.com/CaroliisRibeiro/Projeto4_BD1_CRUD/assets/127742540/17e72d54-e1b7-4ea7-8155-842619e5e41e)
+
+
+<br>
 
 ## OBJETIVOS
 <br>
@@ -25,6 +32,9 @@ e Exclusão (CRUD) em um framework distinto (cada equipe vai usar um
 framework diferente) em pelo menos três tabelas do banco de dados.
 
 
+![crud](https://github.com/CaroliisRibeiro/Projeto4_BD1_CRUD/assets/127742540/61d498e2-fada-44e3-ba17-644724bc87b4)
+
+
 
 ## O CRUD 
 
@@ -43,6 +53,10 @@ Criação de sites e aplicações web: tendo sido projetado especificamente para
 <br>
 Plataformas de redes sociais: diversas funcionalidades de redes sociais, como os perfis de usuários, feeds de notícias e interações, podem ser implementadas com o Django. Alguns exemplos bastante conhecidos são o Instagram e o Pinterest;
 <br>
+
+![DjangoRocket](https://github.com/CaroliisRibeiro/Projeto4_BD1_CRUD/assets/127742540/ad695f07-0160-4c84-ab63-e72febce3a6d)
+
+
 
 ## Caracteriscas CRUD
 1. O modelo de dados: O modelo de dados é responsável por representar a estrutura das informações que serão armazenadas no banco de dados. Utilizando a linguagem Python, você pode criar classes que representam as entidades do seu sistema, como por exemplo, um modelo de usuário, um modelo de produto, etc.
